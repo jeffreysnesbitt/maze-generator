@@ -31,22 +31,10 @@
 
             const maze = generateMaze(numCells, numCells);
             drawMaze(ctx, maze);
-        }
+        } // <-- Added missing closing brace here
 
-      function generateMaze(width, height) {
-    // ... rest of the generateMaze function
+        // ... rest of the JavaScript code
 
-    generatePath(1, 1);
-    return maze;
-}
-
-function drawMaze(ctx, maze) {
-    // ... rest of the drawMaze function
-}
-
-        function printMaze() {
-            window.print();
-        }
     </script>
 </head>
 <body onload="init()">
