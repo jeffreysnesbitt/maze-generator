@@ -100,13 +100,13 @@
 }
 
 function drawMaze(ctx, maze) {
-    ctx.fillStyle = 'black';
+    ctx.fillStyle = 'white';
     ctx.fillRect(0, 0, canvasSize, canvasSize);
 
-    ctx.fillStyle = 'white';
+    ctx.fillStyle = 'black';
     for (let y = 0; y < maze.length; y++) {
         for (let x = 0; x < maze[y].length; x++) {
-            if (maze[y][x]) {
+            if (!maze[y][x]) {
                 ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
             }
         }
@@ -118,6 +118,7 @@ function drawMaze(ctx, maze) {
     ctx.fillStyle = 'green';
     ctx.fillRect(canvasSize - cellSize, canvasSize - cellSize, cellSize, cellSize);
 }
+
 
  
 
