@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Printable Maze Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        #mazeCanvas {
+            border: 1px solid black;
+            display: block;
+            margin: 20px auto;
+        }
+        button {
+            margin-top: 20px;
+        }
+    </style>
+    <script>
+        const canvasSize = 816; // 8.5 inches * 96 DPI
+        const cellSize = 24;
+        const numCells = canvasSize / cellSize;
+
+        function init() {
+            const canvas = document.getElementById('mazeCanvas');
+            canvas.width = canvasSize;
+            canvas.height = canvasSize;
+            const ctx = canvas.getContext('2d');
+
+            const maze = generateMaze(numCells, numCells);
+            drawMaze(ctx, maze);
+        }
+
+        function generateMaze(width, height) {
+            // ... The implementation of the maze generation algorithm will go here
+        }
+
+        function drawMaze(ctx, maze) {
+            // ... The implementation of the maze drawing function will go here
+        }
+
+        function printMaze() {
+            window.print();
+        }
+    </script>
+</head>
+<body onload="init()">
+    <h1>Printable Maze Generator</h1>
+    <canvas id="mazeCanvas"></canvas>
+    <button onclick="printMaze()">Print Maze</button>
+</body>
+</html>
