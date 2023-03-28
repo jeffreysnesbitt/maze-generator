@@ -21,7 +21,7 @@
 <script>
         const canvasSize = 816; // 8.5 inches * 96 DPI
         const cellSize = 24;
-        const numCells = canvasSize / cellSize;
+        const numCells = (canvasSize / cellSize) - 1;
 
         function init() {
             const canvas = document.getElementById('mazeCanvas');
