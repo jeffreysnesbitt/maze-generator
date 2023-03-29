@@ -34,7 +34,7 @@
      }
 
       function generateMaze(width, height) {
-    const maze = new Array(height).fill(null).map(() => new Array(width).fill(true));
+    const maze = new Array(height).fill(null).map(() => new Array(width).fill(false));
     const stack = [];
 
     function isWithinBounds(x, y) {
@@ -64,7 +64,7 @@
     }
 
     function visit(x, y) {
-        maze[y][x] = false;
+        maze[y][x] = true;
     }
 
     function carvePassage(x, y, dir) {
