@@ -23,15 +23,17 @@
         const cellSize = 24;
         const numCells = (canvasSize / cellSize) - 1;
 
-        function init() {
-          const canvas = document.getElementById('mazeCanvas');
-          canvas.width = canvasSize;
-          canvas.height = canvasSize;
-          const ctx = canvas.getContext('2d');
+       function init() {
+  const canvas = document.getElementById('mazeCanvas');
+  canvas.width = canvasSize;
+  canvas.height = canvasSize;
+  const ctx = canvas.getContext('2d');
 
-          const maze = generateMaze(numCells, numCells);
-          drawMaze(ctx, maze);
-        }
+  const numCells = canvasSize / cellSize;
+  const maze = generateMaze(numCells, numCells);
+  drawMaze(ctx, maze);
+}
+
 
 
      }
