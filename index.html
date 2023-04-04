@@ -108,7 +108,7 @@ function generateMaze() {
 
 function drawMaze(ctx, maze) {
   ctx.fillStyle = 'white';
-  ctx.fillRect(0, 0, canvasSize, canvasSize);
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
   ctx.fillStyle = 'black';
   for (let y = 0; y < maze.length; y++) {
@@ -123,8 +123,9 @@ function drawMaze(ctx, maze) {
   ctx.fillRect(0, 0, cellSize, cellSize);
 
   ctx.fillStyle = 'green';
-  ctx.fillRect(canvasSize - cellSize, canvasSize - cellSize, cellSize, cellSize);
+  ctx.fillRect(canvasWidth - cellSize, canvasHeight - cellSize, cellSize, cellSize);
 }
+
 
 
 
