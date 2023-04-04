@@ -21,7 +21,7 @@
 <script>
         const canvasSize = 816; // 8.5 inches * 96 DPI
         const cellSize = 24;
-        const numCells = (canvasSize / cellSize);
+        const numCells = (canvasSize / cellSize) - 1;
 
         function init() {
             const canvas = document.getElementById('mazeCanvas');
@@ -75,7 +75,7 @@
         return arr[Math.floor(Math.random() * arr.length)];
     }
 
-  function generatePath(x, y) {
+    function generatePath(x, y) {
         visit(x, y);
         stack.push({ x, y });
 
@@ -94,85 +94,6 @@
             }
         }
     }
-
-    generatePath(1, 1);
-    return maze;
-}
-
-function drawMaze(ctx, maze) {
-    ctx.fillStyle = 'white';
-    ctx.fillRect(0, 0, canvasSize, canvasSize);
-
-    ctx.fillStyle = 'black';
-    for (let y = 0; y < maze.length; y++) {
-        for (let x = 0; x < maze[y].length; x++) {
-            if (!maze[y][x]) {
-                ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
-            }
-        }
-    }
-
-    ctx.fillStyle = 'red';
-    ctx.fillRect(0, 0, cellSize, cellSize);
-
-    ctx.fillStyle = 'green';
-    ctx.fillRect(canvasSize - cellSize, canvasSize - cellSize, cellSize, cellSize);
-}
-
-
- 
-
-         function printMaze() {
-            window.print();
-        }
-    </script>
-</head>
-<body onload="init()">
-    <h1>Printable Maze Generator</h1>
-    <canvas id="mazeCanvas"></canvas>
-    <button onclick="printMaze()">Print Maze</button>
-</body>
-</html>
-It seems that the current implementation of the code generates a maze but does not guarantee that there is a path from the starting point (top left corner) to the ending point (bottom right corner). To ensure that there is always a path from the starting point to the ending point, one possible solution is to modify the generatePath function to perform a depth-first search from the starting point until the ending point is reached.
-
-Here's one possible implementation:
-
-javascript
-Copy code
-function generatePath(x, y) {
-    visit(x, y);
-    stack.push({ x, y });
-
-    while (stack.length > 0) {
-        const current = stack[stack.length - 1];
-
-        if (current.x === numCells - 2 && current.y === numCells - 2) {
-            // Reached the ending point
-            visit(current.x, current.y);
-            return;
-        }
-
-        if (hasUnvisitedNeighbours(current.x, current.y)) {
-            const neighbours = getUnvisitedNeighbours(current.x, current.y);
-            const { x: nx, y: ny, dir } = randomElement(neighbours);
-
-            carvePassage(current.x, current.y, dir);
-            visit(nx, ny);
-            stack.push({ x: nx, y: ny });
-        } else {
-            stack.pop();
-        }
-    }
-}
-In this implementation, the generatePath function checks whether the current point is the ending point (numCells - 2 represents the second-to-last cell, which is the cell next to the bottom right corner). If it is, the function immediately marks the point as visited and returns. This ensures that there is always a path from the starting point to the ending point.
-
-Note that this implementation assumes that the maze is always square (i.e., numCells is the same for width and height). If you want to support rectangular mazes, you will need to modify the implementation accordingly.
-
-
-
-
-
-
 
     generatePath(1, 1);
     return maze;
