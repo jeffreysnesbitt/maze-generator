@@ -34,8 +34,13 @@
 }
 
 
-  function generateMaze(width, height) {
-  const maze = new Array(height).fill(null).map(() => new Array(width).fill(false));
+ const canvasWidth = 816; // 8.5 inches * 96 DPI
+const canvasHeight = 1056; // 11 inches * 96 DPI
+const cellSize = 24;
+const numCells = (canvasWidth / cellSize) - 1;
+
+function generateMaze() {
+  const maze = new Array(numCells).fill(null).map(() => new Array(numCells).fill(false));
   const stack = [];
 
   function isWithinBounds(x, y) {
