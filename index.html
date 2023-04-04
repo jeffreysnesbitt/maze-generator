@@ -76,9 +76,10 @@
             }
 
           
+const maze = generateMaze(numCells, numCells);
+generatePath(1, 1);
+drawMaze(ctx, maze);
 
-  function generatePath(x, y) {
-    visit(x, y);
 
     while (stack.length > 0) {
       const current = stack[stack.length - 1];
@@ -126,8 +127,12 @@ function drawMaze(ctx, maze) {
 
     ctx.fillStyle = 'black';
     for (let y = 0; y < maze.length; y++) {
-       
-
+        for (let x = 0; x < maze[y].length; x++) {
+            if (maze[y][x]) {
+                ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+            }
+        }
+    }
 
     ctx.fillStyle = 'red';
     ctx.fillRect(0, 0, cellSize, cellSize);
@@ -135,6 +140,7 @@ function drawMaze(ctx, maze) {
     ctx.fillStyle = 'green';
     ctx.fillRect(canvasSize - cellSize, canvasSize - cellSize, cellSize, cellSize);
 }
+
 
 
  
