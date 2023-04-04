@@ -19,19 +19,19 @@
         }
     </style>
 <script>
-        const canvasSize = 816; // 8.5 inches * 96 DPI
-        const cellSize = 24;
-        const numCells = (canvasSize / cellSize) - 1;
+const canvasWidth = 816; // 8.5 inches * 96 DPI
+const canvasHeight = 1056; // 11 inches * 96 DPI
 
-       function init() {
-  const canvas = document.getElementById('mazeCanvas');
-  canvas.width = 816;
-  canvas.height = 1056;
-  const ctx = canvas.getContext('2d');
+function init() {
+    const canvas = document.getElementById('mazeCanvas');
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
+    const ctx = canvas.getContext('2d');
 
-  const maze = generateMaze(numCells, numCells);
-  drawMaze(ctx, maze);
+    const maze = generateMaze();
+    drawMaze(ctx, maze);
 }
+
 
 
  const canvasWidth = 816; // 8.5 inches * 96 DPI
@@ -44,8 +44,9 @@ function generateMaze() {
   const stack = [];
 
   function isWithinBounds(x, y) {
-    return x >= 0 && x < width && y >= 0 && y < height;
-  }
+    return x >= 0 && x < numCells && y >= 0 && y < numCells;
+}
+
 
   function hasUnvisitedNeighbours(x, y) {
     const neighbours = [      [x - 2, y],
