@@ -92,10 +92,12 @@
                     if (hasUnvisitedNeighbours(current.x, current.y)) {
                         const neighbours = getUnvisitedNeighbours(current.x, current.y);
                         const { x: nx, y: ny, dir } = randomElement(neighbours)
+            }
 
 
-                            carvePassage(current.x, current.y, dir);
-                    visit(nx, ny);
+                           carvePassage(current.x, current.y, dir);
+                            visit(nx, ny);
+
                     stack.push({ x: nx, y: ny });
                 } else {
                     stack.pop();
