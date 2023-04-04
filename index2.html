@@ -1,1 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Printable Maze Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        #mazeCanvas {
+            border: 1px solid black;
+            display: block;
+            margin: 20px auto;
+        }
+        button {
+            margin-top: 20px;
+        }
+    </style>
+<script>
+        const canvasSize = 816; // 8.5 inches * 96 DPI
+        const cellSize = 24;
+        const numCells = (canvasSize / cellSize) - 1;
 
+        function init() {
+            const canvas = document.getElementById('mazeCanvas');
+            canvas.width = canvasSize;
+            canvas.height = canvasSize;
+            const ctx = canvas.getContext('2d');
+
+            const maze = generateMaze(numCells, numCells);
+            drawMaze(ctx, maze);
+     }
+
+      function generateMaze(width, height) {
+    const maze = new Array(height).fill(null).map(() => new Array(width).fill(false));
+    const stack = [];
+
+    function isWithinBounds(x, y) {
+        return x >= 0 && x < width && y >= 0 && y < height;
+    }
+
+    function hasUnvisitedNeighbours(x, y) {
+        const neighbours = [
+            [x - 2, y],
+            [x + 2, y],
+            [x, y - 2],
+            [x, y + 2]
+        ];
+
+        return neighbours.some(([nx, ny]) => isWithinBounds(nx, ny) && !maze[ny][nx]);
+    }
+
+    function getUnvisitedNeighbours(x, y) {
+        const neighbours = [
+            { x: x - 2, y: y, dir: [1, 0] },
+            { x: x + 2, y: y, dir: [-1, 0] },
+            { x: x, y: y - 2, dir: [0, 1] },
+            { x: x, y: y + 2, dir: [0, -1] }
+        ];
+
+        return neighbours.filter(({ x, y }) => isWithinBounds(x, y) && !maze[y][x]);
+    }
+
+    function visit(x, y) {
+        maze[y][x] = true;
+    }
+
+    function carvePassage(x, y, dir) {
+        maze[y + dir[1]][x + dir[0]] = true;
+    }
+
+    function randomElement(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function generatePath(x, y) {
+        visit(x, y);
+        stack.push({ x, y });
+
+        while (stack.length > 0) {
+            const current = stack[stack.length - 1];
+
+            if (hasUnvisitedNeighbours(current.x, current.y)) {
+                const neighbours = getUnvisitedNeighbours(current.x, current.y);
+                const { x: nx, y: ny, dir } = randomElement(neighbours);
+
+                carvePassage(current.x, current.y, dir);
+                visit(nx, ny);
+                stack.push({ x: nx, y: ny });
+            } else {
+                stack.pop();
+            }
+        }
+    }
+
+    generatePath(1, 1);
+    return maze;
+}
+
+function drawMaze(ctx, maze) {
+    ctx.fillStyle = 'white';
+    ctx.fillRect(0, 0, canvasSize, canvasSize);
+
+    ctx.fillStyle = 'black';
+    for (let y = 0; y < maze.length; y++) {
+        for (let x = 0; x < maze[y].length; x++) {
+            if (!maze[y][x]) {
+                ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+            }
+        }
+    }
+
+    ctx.fillStyle = 'red';
+    ctx.fillRect(0, 0, cellSize, cellSize);
+
+    ctx.fillStyle = 'green';
+    ctx.fillRect(canvasSize - cellSize, canvasSize - cellSize, cellSize, cellSize);
+}
+
+
+ 
+
+         function printMaze() {
+            window.print();
+        }
+    </script>
+</head>
+<body onload="init()">
+    <h1>Printable Maze Generator</h1>
+    <canvas id="mazeCanvas"></canvas>
+    <button onclick="printMaze()">Print Maze</button>
+</body>
+</html>
