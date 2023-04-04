@@ -18,120 +18,115 @@
             margin-top: 20px;
         }
     </style>
-<script>
-const canvasWidth = 816; // 8.5 inches * 96 DPI
-const canvasHeight = 1056; // 11 inches * 96 DPI
+</head>
+<body onload="init()">
+    <h1>Printable Maze Generator</h1>
+    <canvas id="mazeCanvas"></canvas>
+    <button onclick="printMaze()">Print Maze</button>
 
-function init() {
-    const canvas = document.getElementById('mazeCanvas');
-    canvas.width = canvasWidth;
-    canvas.height = canvasHeight;
-    const ctx = canvas.getContext('2d');
+    <script>
+        const canvasWidth = 816; // 8.5 inches * 96 DPI
+        const canvasHeight = 1056; // 11 inches * 96 DPI
+        const cellSize = 24;
+        const numCells = (canvasWidth / cellSize) - 1;
 
-    const maze = generateMaze();
-    drawMaze(ctx, maze);
-}
+        function init() {
+            const canvas = document.getElementById('mazeCanvas');
+            canvas.width = canvasWidth;
+            canvas.height = canvasHeight;
+            const ctx = canvas.getContext('2d');
 
+            const maze = generateMaze();
+            drawMaze(ctx, maze);
+        }
 
+        function generateMaze() {
+            const maze = new Array(numCells).fill(null).map(() => new Array(numCells).fill(false));
+            const stack = [];
 
- const canvasWidth = 816; // 8.5 inches * 96 DPI
-const canvasHeight = 1056; // 11 inches * 96 DPI
-const cellSize = 24;
-const numCells = (canvasWidth / cellSize) - 1;
+            function isWithinBounds(x, y) {
+                return x >= 0 && x < numCells && y >= 0 && y < numCells;
+            }
 
-function generateMaze() {
-  const maze = new Array(numCells).fill(null).map(() => new Array(numCells).fill(false));
-  const stack = [];
+            function hasUnvisitedNeighbours(x, y) {
+                const neighbours = [
+                    [x - 2, y],
+                    [x + 2, y],
+                    [x, y - 2],
+                    [x, y + 2]
+                ];
 
-  function isWithinBounds(x, y) {
-    return x >= 0 && x < numCells && y >= 0 && y < numCells;
-  }
+                return neighbours.some(([nx, ny]) => isWithinBounds(nx, ny) && !maze[ny][nx]);
+            }
 
-  function hasUnvisitedNeighbours(x, y) {
-    const neighbours = [
-      [x - 2, y],
-      [x + 2, y],
-      [x, y - 2],
-      [x, y + 2]
-    ];
+            function getUnvisitedNeighbours(x, y) {
+                const neighbours = [
+                    { x: x - 2, y: y, dir: [1, 0] },
+                    { x: x + 2, y: y, dir: [-1, 0] },
+                    { x: x, y: y - 2, dir: [0, 1] },
+                    { x: x, y: y + 2, dir: [0, -1] }
+                ];
 
-    return neighbours.some(([nx, ny]) => isWithinBounds(nx, ny) && !maze[ny][nx]);
-  }
+                return neighbours.filter(({ x, y }) => isWithinBounds(x, y) && !maze[y][x]);
+            }
 
-  function getUnvisitedNeighbours(x, y) {
-    const neighbours = [
-      { x: x - 2, y: y, dir: [1, 0] },
-      { x: x + 2, y: y, dir: [-1, 0] },
-      { x: x, y: y - 2, dir: [0, 1] },
-      { x: x, y: y + 2, dir: [0, -1] }
-    ];
+            function visit(x, y) {
+                maze[y][x] = true;
+            }
 
-    return neighbours.filter(({ x, y }) => isWithinBounds(x, y) && !maze[y][x]);
-  }
+            function carvePassage(x, y, dir) {
+                maze[y + dir[1]][x + dir[0]] = true;
+            }
 
-  function visit(x, y) {
-    maze[y][x] = true;
-  }
+            function randomElement(arr) {
+                return arr[Math.floor(Math.random() * arr.length)];
+            }
 
-  function carvePassage(x, y, dir) {
-    maze[y + dir[1]][x + dir[0]] = true;
-  }
+            function generatePath(x, y) {
+                visit(x, y);
+                stack.push({ x, y });
 
-  function randomElement(arr) {
-    return arr[Math.floor(Math.random() * arr.length)];
-  }
+                while (stack.length > 0) {
+                    const current = stack[stack.length - 1];
 
-  function generatePath(x, y) {
-    visit(x, y);
-    stack.push({ x, y });
-
-    while (stack.length > 0) {
-      const current = stack[stack.length - 1];
-
-      if (hasUnvisitedNeighbours(current.x, current.y)) {
-        const neighbours = getUnvisitedNeighbours(current.x, current.y);
-        const { x: nx, y: ny, dir } = randomElement(neighbours);
-
-        carvePassage(current.x, current.y, dir);
-        visit(nx, ny);
-        stack.push({ x: nx, y: ny });
-      } else {
-        stack.pop();
-      }
-    }
-  }
-
-  generatePath(0, 0);
-  return maze;
-}
+                    if (hasUnvisitedNeighbours(current.x, current.y)) {
+                        const neighbours = getUnvisitedNeighbours(current.x, current.y);
+                        const { x: nx, y: ny, dir } = randomElement(neighbours)
 
 
-function drawMaze(ctx, maze) {
-  ctx.fillStyle = 'white';
-  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+                            carvePassage(current.x, current.y, dir);
+                    visit(nx, ny);
+                    stack.push({ x: nx, y: ny });
+                } else {
+                    stack.pop();
+                }
+            }
 
-  ctx.fillStyle = 'black';
-  for (let y = 0; y < maze.length; y++) {
-    for (let x = 0; x < maze[y].length; x++) {
-      if (!maze[y][x]) {
-        ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
-      }
-    }
-  }
+            generatePath(0, 0);
+            return maze;
+        }
 
-  ctx.fillStyle = 'red';
-  ctx.fillRect(0, 0, cellSize, cellSize);
+        function drawMaze(ctx, maze) {
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-  ctx.fillStyle = 'green';
-  ctx.fillRect(canvasWidth - cellSize, canvasHeight - cellSize, cellSize, cellSize);
-}
+            ctx.fillStyle = 'black';
+            for (let y = 0; y < maze.length; y++) {
+                for (let x = 0; x < maze[y].length; x++) {
+                    if (!maze[y][x]) {
+                        ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+                    }
+                }
+            }
 
+            ctx.fillStyle = 'red';
+            ctx.fillRect(0, 0, cellSize, cellSize);
 
+            ctx.fillStyle = 'green';
+            ctx.fillRect(canvasWidth - cellSize, canvasHeight - cellSize, cellSize, cellSize);
+        }
 
-
- 
-
-         function printMaze() {
+        function printMaze() {
             window.print();
         }
     </script>
