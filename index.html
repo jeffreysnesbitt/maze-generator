@@ -73,25 +73,30 @@
         return arr[Math.floor(Math.random() * arr.length)];
     }
 
-    function generatePath(x, y) {
-        visit(x, y);
-        stack.push({ x, y });
+    function generatePath() {
+  visit(0, 0);
+  stack.push({ x: 0, y: 0 });
 
-        while (stack.length > 0) {
-            const current = stack[stack.length - 1];
+  while (stack.length > 0) {
+    const current = stack[stack.length - 1];
 
-            if (hasUnvisitedNeighbours(current.x, current.y)) {
-                const neighbours = getUnvisitedNeighbours(current.x, current.y);
-                const { x: nx, y: ny, dir } = randomElement(neighbours);
-
-                carvePassage(current.x, current.y, dir);
-                visit(nx, ny);
-                stack.push({ x: nx, y: ny });
-            } else {
-                stack.pop();
-            }
-        }
+    if (current.x === numCells - 1 && current.y === numCells - 1) {
+      break;
     }
+
+    if (hasUnvisitedNeighbours(current.x, current.y)) {
+      const neighbours = getUnvisitedNeighbours(current.x, current.y);
+      const { x: nx, y: ny, dir } = randomElement(neighbours);
+
+      carvePassage(current.x, current.y, dir);
+      visit(nx, ny);
+      stack.push({ x: nx, y: ny });
+    } else {
+      stack.pop();
+    }
+  }
+}
+
 
     generatePath(1, 1);
     return maze;
