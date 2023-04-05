@@ -79,31 +79,56 @@
 
   function generatePath(x, y) {
     visit(x, y);
-    stack.push({ x, y });
+    const start = { x, y };
+    const end = { x: numCells - 2, y: numCells - 2 };
+    const openList = [start];
+    const closedList = [];
+    const gScore = new Array(numCells).fill(null).map(() => new Array(numCells).fill(Infinity));
+    const fScore = new Array(numCells).fill(null).map(() => new Array(numCells).fill(Infinity));
+    gScore[y][x] = 0;
+    fScore[y][x] = heuristic(start, end);
 
-    while (stack.length > 0) {
-        const current = stack[stack.length - 1];
+    function heuristic(a, b) {
+        return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
+    }
 
-        if (hasUnvisitedNeighbours(current.x, current.y)) {
-            const neighbours = getUnvisitedNeighbours(current.x, current.y);
-            const { x: nx, y: ny, dir } = randomElement(neighbours);
-
-            carvePassage(current.x, current.y, dir);
-            visit(nx, ny);
-            stack.push({ x: nx, y: ny });
-
-            // If we're at the second-to-last cell, carve a passage to the bottom-right corner
-            if (stack.length === numCells * numCells - 1) {
-                maze[ny][nx + 1] = true;
-                maze[ny + 1][nx] = true;
-                maze[ny + 1][nx + 1] = false;
-                stack.push({ x: nx + 1, y: ny + 1 });
-            }
-        } else {
-            stack.pop();
+    function reconstructPath(current) {
+        const path = [];
+        while (current.parent) {
+            path.unshift(current);
+            current = current.parent;
         }
+        path.unshift(start);
+        return path;
+    }
+
+    while (openList.length > 0) {
+        const current = openList.reduce((a, b) => fScore[b.y][b.x] < fScore[a.y][a.x] ? b : a);
+        if (current.x === end.x && current.y === end.y) {
+            const path = reconstructPath(current);
+            path.forEach(({ x, y }) => carvePassage(x, y, [0, 0]));
+            return;
+        }
+
+        openList.splice(openList.indexOf(current), 1);
+        closedList.push(current);
+
+        const neighbours = getUnvisitedNeighbours(current.x, current.y);
+
+        neighbours.forEach(({ x, y, dir }) => {
+            const tentativeGScore = gScore[current.y][current.x] + 1;
+            if (!closedList.some(node => node.x === x && node.y === y) || tentativeGScore < gScore[y][x]) {
+                visit(x, y);
+                gScore[y][x] = tentativeGScore;
+                fScore[y][x] = gScore[y][x] + heuristic({ x, y }, end);
+                if (!openList.some(node => node.x === x && node.y === y)) {
+                    openList.push({ x, y, parent: current });
+                }
+            }
+        });
     }
 }
+
 
 
 
