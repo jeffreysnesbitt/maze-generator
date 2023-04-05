@@ -77,25 +77,32 @@
         return arr[Math.floor(Math.random() * arr.length)];
     }
 
-    function generatePath(x, y) {
-        visit(x, y);
-        stack.push({ x, y });
+   function generatePath(x, y) {
+    visit(x, y);
+    stack.push({ x, y });
 
-        while (stack.length > 0) {
-            const current = stack[stack.length - 1];
+    while (stack.length > 0) {
+        const current = stack[stack.length - 1];
 
-            if (hasUnvisitedNeighbours(current.x, current.y)) {
-                const neighbours = getUnvisitedNeighbours(current.x, current.y);
-                const { x: nx, y: ny, dir } = randomElement(neighbours);
+        if (hasUnvisitedNeighbours(current.x, current.y)) {
+            const neighbours = getUnvisitedNeighbours(current.x, current.y);
+            const { x: nx, y: ny, dir } = randomElement(neighbours);
 
-                carvePassage(current.x, current.y, dir);
-                visit(nx, ny);
-                stack.push({ x: nx, y: ny });
-            } else {
-                stack.pop();
+            carvePassage(current.x, current.y, dir);
+            visit(nx, ny);
+            stack.push({ x: nx, y: ny });
+
+            if (nx == numCells - 2 && ny == numCells - 2) {
+                // End path on bottom-right corner
+                carvePassage(nx, ny, [1, 0]);
+                break;
             }
+        } else {
+            stack.pop();
         }
     }
+}
+
 
     generatePath(1, 1);
     return maze;
