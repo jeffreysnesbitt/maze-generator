@@ -77,25 +77,34 @@
         return arr[Math.floor(Math.random() * arr.length)];
     }
 
-   function generatePath(x, y) {
+  function generatePath(x, y) {
     visit(x, y);
     stack.push({ x, y });
 
     while (stack.length > 0) {
         const current = stack[stack.length - 1];
-        const neighbours = getUnvisitedNeighbours(current.x, current.y);
 
-        if (neighbours.length > 0) {
+        if (hasUnvisitedNeighbours(current.x, current.y)) {
+            const neighbours = getUnvisitedNeighbours(current.x, current.y);
             const { x: nx, y: ny, dir } = randomElement(neighbours);
 
             carvePassage(current.x, current.y, dir);
             visit(nx, ny);
             stack.push({ x: nx, y: ny });
+
+            // If we're at the second-to-last cell, carve a passage to the bottom-right corner
+            if (stack.length === numCells * numCells - 1) {
+                maze[ny][nx + 1] = true;
+                maze[ny + 1][nx] = true;
+                maze[ny + 1][nx + 1] = false;
+                stack.push({ x: nx + 1, y: ny + 1 });
+            }
         } else {
             stack.pop();
         }
     }
 }
+
 
 
 
@@ -115,6 +124,8 @@ function drawMaze(ctx, maze) {
             }
         }
     }
+    
+    
 
     ctx.fillStyle = 'red';
     ctx.fillRect(0, 0, cellSize, cellSize);
